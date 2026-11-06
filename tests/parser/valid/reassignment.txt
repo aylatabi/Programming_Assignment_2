@@ -1,0 +1,7 @@
+# EXPECT: valid (5 equations, inputs: A B; X assigned 3 times)
+# TESTS: reassignment and self-reference (X = X + A reads the old X)
+X = A + B
+X = X + A
+Y = X * B
+X = Y - A
+Z = X + Y

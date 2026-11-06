@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 1: name 'X_1' ends in _<digits>, which is reserved for SSA versions
+# TESTS: user name that collides with SSA renaming (destination side)
+X = A + B
+X_1 = X + A

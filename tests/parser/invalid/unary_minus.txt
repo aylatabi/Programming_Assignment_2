@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 5: expected an operand, found '-' (unary minus not supported)
+# TESTS: negation
+X = A + B
+Y = -A

@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 1: 'clk' is reserved for the hardware ports
+# TESTS: clash with top-level port names (update if your port names differ)
+X = A + B
+clk = X + A

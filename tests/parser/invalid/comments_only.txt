@@ -1,0 +1,5 @@
+# EXPECT: error: no equations found
+# TESTS: file with only comments and blank lines
+
+# nothing here
+

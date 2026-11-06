@@ -1,0 +1,6 @@
+# EXPECT: valid (4 equations, inputs: A B)
+# TESTS: the example from the assignment spec
+X = A + B
+Y = X + A
+Z = X - B
+Q = B * Z

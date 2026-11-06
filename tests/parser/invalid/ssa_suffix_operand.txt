@@ -1,0 +1,3 @@
+# EXPECT: error line 3, col 9: name 'B_2' ends in _<digits>, which is reserved for SSA versions
+# TESTS: user name that collides with SSA renaming (operand side)
+X = A + B_2

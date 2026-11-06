@@ -1,0 +1,6 @@
+# EXPECT: valid (4 equations, inputs: alpha A a in_2x)
+# TESTS: multi-character names, underscores, digits inside names, case sensitivity (a and A differ)
+sum_ab = alpha + A
+_tmp = sum_ab * a
+result2 = _tmp - in_2x
+a_b_c = result2 + _tmp

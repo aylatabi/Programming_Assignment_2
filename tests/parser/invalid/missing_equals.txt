@@ -1,0 +1,4 @@
+# EXPECT: error line 4: missing '='
+# TESTS: no assignment
+X = A + B
+Y X + A

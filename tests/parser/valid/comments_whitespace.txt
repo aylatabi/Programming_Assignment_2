@@ -1,0 +1,10 @@
+# EXPECT: valid (3 equations, inputs: A B C)
+# TESTS: comments, blank lines, tabs, extra and missing spaces
+
+# a full-line comment
+X = A + B   # trailing comment
+
+
+	Y=X*C
+      Z   =   Y   -   A
+

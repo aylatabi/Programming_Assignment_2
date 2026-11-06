@@ -1,0 +1,5 @@
+# EXPECT: valid with warning line 3: value of 'X' is overwritten on line 4 before it is read
+# TESTS: dead assignment
+X = A + B
+X = A * B
+Y = X - A

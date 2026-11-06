@@ -1,0 +1,4 @@
+﻿# EXPECT: valid (2 equations, inputs: A B)
+# TESTS: UTF-8 byte-order mark at the start of the file
+X = A + B
+Y = X * B

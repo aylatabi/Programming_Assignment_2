@@ -1,0 +1,4 @@
+# EXPECT: error line 4: expected an operand after '+'
+# TESTS: line ends after the operator
+X = A + B
+Y = X +

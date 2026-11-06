@@ -1,0 +1,4 @@
+# EXPECT: valid with warning line 3: constant 70000 does not fit the chosen bit-width
+# TESTS: constant overflow (70000 needs 17 bits; adjust if your width is wider)
+X = A + 70000
+Y = X * B

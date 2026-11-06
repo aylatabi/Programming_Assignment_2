@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 9: expected an operand, found '-' (negative constants not supported)
+# TESTS: constant written with a minus sign
+X = A + B
+Y = X + -3

@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 7: more than one '='
+# TESTS: chained assignment
+X = A + B
+Y = Z = X + A

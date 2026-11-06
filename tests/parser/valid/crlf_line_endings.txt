@@ -1,0 +1,5 @@
+# EXPECT: valid (3 equations, inputs: A B)
+# TESTS: Windows CRLF line endings
+X = A + B
+Y = X * A
+Z = Y - B

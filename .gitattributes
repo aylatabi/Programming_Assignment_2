@@ -1,0 +1,2 @@
+# Parser test files must be stored byte-for-byte (CRLF and BOM cases)
+tests/parser/** -text

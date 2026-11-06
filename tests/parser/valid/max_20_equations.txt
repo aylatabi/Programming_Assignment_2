@@ -1,0 +1,22 @@
+# EXPECT: valid (exactly 20 equations, the maximum; inputs: A B)
+# TESTS: equation limit boundary
+E1 = A + B
+E2 = E1 + A
+E3 = E2 + A
+E4 = E3 + A
+E5 = E4 + A
+E6 = E5 + A
+E7 = E6 + A
+E8 = E7 + A
+E9 = E8 + A
+E10 = E9 + A
+E11 = E10 + A
+E12 = E11 + A
+E13 = E12 + A
+E14 = E13 + A
+E15 = E14 + A
+E16 = E15 + A
+E17 = E16 + A
+E18 = E17 + A
+E19 = E18 + A
+E20 = E19 + A

@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 5: unexpected character '('
+# TESTS: parentheses are not part of the grammar
+X = A + B
+Y = (X + A)

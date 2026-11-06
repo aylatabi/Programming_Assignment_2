@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 7: unsupported operator '/' (only + - * allowed)
+# TESTS: operator outside the allowed set
+X = A + B
+Y = X / B

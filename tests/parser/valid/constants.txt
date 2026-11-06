@@ -1,0 +1,6 @@
+# EXPECT: valid (4 equations, inputs: A B; constants 3, 10, 0, 2)
+# TESTS: integer constants on the left, right, and both sides
+X = A + 3
+Y = 10 * B
+Z = X - 0
+W = 2 * 2

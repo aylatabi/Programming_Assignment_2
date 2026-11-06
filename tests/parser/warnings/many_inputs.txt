@@ -1,0 +1,11 @@
+# EXPECT: valid with warning: 10 input variables, more than the board's switch groups; some will be hardcoded
+# TESTS: input count vs. FPGA switches (threshold depends on bit-width and board)
+P = A + B
+Q = C + D
+R = E * F
+S = G - H
+T = I + J
+U = P + Q
+V = R * S
+W = T + U
+Z = V - W

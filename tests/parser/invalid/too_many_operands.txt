@@ -1,0 +1,4 @@
+# EXPECT: error line 4, col 11: unexpected '+' after second operand (one operator per line)
+# TESTS: three operands on one line
+X = A + B
+Y = X + A + B

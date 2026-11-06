@@ -1,0 +1,7 @@
+# EXPECT: 3 errors, all reported in one run: line 4 (unsupported '/'), line 6 (missing '='), line 7 (too many operands)
+# TESTS: errors are collected, not stopped at the first one
+X = A + B
+Y = X / A
+Z = X * B
+W X + A
+V = A + B + Z

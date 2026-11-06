@@ -1,0 +1,5 @@
+# EXPECT: valid (3 equations, inputs: A B)
+# TESTS: trailing semicolons are accepted, with or without a space before them
+X = A + B;
+Y = X * A ;
+Z = Y - B
