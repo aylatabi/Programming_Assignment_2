@@ -1,0 +1,5 @@
+# Input example from assignment specification
+X=A+B
+Y=X+A
+Z=X-B
+Q=B*Z

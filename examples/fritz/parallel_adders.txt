@@ -1,0 +1,5 @@
+# Constrained resource tradeoff: two independent adders
+X=A+B
+Y=C+D
+Z=X+Y
+Q=Z-A

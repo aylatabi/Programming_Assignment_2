@@ -1,0 +1,93 @@
+{
+  "schedule": {
+    "A_1": 0,
+    "A_2": 1,
+    "P_1": 2,
+    "R_1": 3
+  },
+  "units": {
+    "add": 1,
+    "sub": 1,
+    "mul": 1
+  },
+  "assignment": {
+    "A_1": {
+      "cycle": 0,
+      "op": "add",
+      "unit": 0,
+      "physical_unit": "add_0"
+    },
+    "A_2": {
+      "cycle": 1,
+      "op": "add",
+      "unit": 0,
+      "physical_unit": "add_0"
+    },
+    "P_1": {
+      "cycle": 2,
+      "op": "mul",
+      "unit": 0,
+      "physical_unit": "mul_0"
+    },
+    "R_1": {
+      "cycle": 3,
+      "op": "sub",
+      "unit": 0,
+      "physical_unit": "sub_0"
+    }
+  },
+  "operand_muxes": {
+    "add_0": [
+      {
+        "cycle": 0,
+        "node": "A_1",
+        "a": "in_B",
+        "b": "in_C"
+      },
+      {
+        "cycle": 1,
+        "node": "A_2",
+        "a": "A_1",
+        "b": "in_D"
+      }
+    ],
+    "sub_0": [
+      {
+        "cycle": 3,
+        "node": "R_1",
+        "a": "P_1",
+        "b": "in_C"
+      }
+    ],
+    "mul_0": [
+      {
+        "cycle": 2,
+        "node": "P_1",
+        "a": "A_2",
+        "b": "in_E"
+      }
+    ]
+  },
+  "registers": [
+    {
+      "name": "A_1",
+      "write_cycle": 0,
+      "source": "add_0"
+    },
+    {
+      "name": "A_2",
+      "write_cycle": 1,
+      "source": "add_0"
+    },
+    {
+      "name": "P_1",
+      "write_cycle": 2,
+      "source": "mul_0"
+    },
+    {
+      "name": "R_1",
+      "write_cycle": 3,
+      "source": "sub_0"
+    }
+  ]
+}

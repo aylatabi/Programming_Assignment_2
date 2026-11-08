@@ -1,0 +1,18 @@
+digraph "professor_run_1" {
+  rankdir=TB;
+  node [fontname=Helvetica];
+  "in_A" [label="A", shape=box, style=rounded];
+  "in_B" [label="B", shape=box, style=rounded];
+  n0 [label="+\nX_1", shape=circle, peripheries=2];
+  "in_A" -> n0;
+  "in_B" -> n0;
+  n1 [label="+\nY_1", shape=circle, peripheries=2];
+  n0 -> n1;
+  "in_A" -> n1;
+  n2 [label="-\nZ_1", shape=circle, peripheries=2];
+  n0 -> n2;
+  "in_B" -> n2;
+  n3 [label="*\nQ_1", shape=circle, peripheries=2];
+  "in_B" -> n3;
+  n2 -> n3;
+}

@@ -58,6 +58,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         help=f"write the schedule as JSON to PATH (default: {DEFAULT_OUT_DIR}/<name>_<mode>_schedule.json)",
     )
+    # Fritz-owned backend; default CLI behavior remains Ayla's original text output.
+    ap.add_argument("--emit-rtl", action="store_true", help="write resource binding, datapath, FSM, modular functional units and testbench")
+    ap.add_argument("--export-binding", action="store_true", help="write resource binding JSON for selected schedule")
+    ap.add_argument("--width", type=_positive, default=8, help="unsigned RTL width (default: 8; max 64)")
+    ap.add_argument("--test-values", default=None, metavar="A=3,B=2", help="input stimulus for the generated Verilog testbench")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT_DIR, help="directory for generated files")
     return ap
 
@@ -136,7 +141,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     try:
         sched = scheduler(dag, limits or None, args.latency)
-    except ValueError as e:
+    except (ValueError, RuntimeError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
 
@@ -151,6 +156,20 @@ def main(argv: list[str] | None = None) -> int:
     print(format_schedule(sched, name))
     schedule_json = json.dumps(schedule_to_json(sched, name), indent=2) + "\n"
     _export(args.export_schedule, args.out / f"{stem}_{mode}_schedule.json", schedule_json, "Schedule")
+
+    if args.emit_rtl or args.export_binding:
+        from .fritz_bridge import emit
+        try:
+            if not 1 <= args.width <= 64:
+                raise ValueError('--width must be 1..64')
+            target = args.out / f"{stem}_{mode}_rtl"
+            details = emit(sched, target, width=args.width, test_values=args.test_values)
+        except (ValueError, RuntimeError, OSError) as e:
+            print(f"error: backend failed: {e}", file=sys.stderr)
+            return 2
+        print(f"RTL and binding artifacts written to {target}")
+        print(f"  cycles: {details['latency']}; physical units: {details['units']}")
+        print(f"  reference results (test values): {details['reference_outputs']}")
     return 0
 
 

@@ -1,19 +1,16 @@
-"""All schedulers, by mode name. Each one follows the contract in hls/schedule.py:
+"""Scheduler registration for the shared HLS CLI.
 
-    schedule(dag, limits=None, latency=None) -> Schedule
-
-To add a scheduler: create hls/schedulers/<name>.py with a schedule()
-function, import it here and add it to SCHEDULERS.
+Ayla: asap and cons-asap (cons-asap remains her integration responsibility).
+Fritz: alap, cons-alap, custom. Each accepts the shared DAG and returns the
+1-based Schedule defined in hls.schedule.
 """
-
-from . import asap
+from . import asap, alap, cons_alap, custom
 
 SCHEDULERS = {
-    "asap": asap.schedule,
-    # "cons-asap": cons_asap.schedule,   # Ayla, Stage 2
-    # "alap": alap.schedule,             # Fritz, Stage 2
-    # "cons-alap": cons_alap.schedule,   # Fritz, Stage 2
-    # "custom": custom.schedule,         # Fritz, Stage 2
+    'asap': asap.schedule,
+    # 'cons-asap': cons_asap.schedule,   # Ayla's module, to be integrated later
+    'alap': alap.schedule,
+    'cons-alap': cons_alap.schedule,
+    'custom': custom.schedule,
 }
-
-ALL_MODES = ["asap", "cons-asap", "alap", "cons-alap", "custom"]
+ALL_MODES = ['asap', 'cons-asap', 'alap', 'cons-alap', 'custom']

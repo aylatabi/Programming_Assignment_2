@@ -1,0 +1,8 @@
+# SSA form of professor_run_1.txt
+# inputs:  A B
+# outputs: X -> X_1, Y -> Y_1, Z -> Z_1, Q -> Q_1
+
+X_1 = A + B     # line 2
+Y_1 = X_1 + A   # line 3
+Z_1 = X_1 - B   # line 4
+Q_1 = B * Z_1   # line 5

@@ -1,0 +1,5 @@
+# SSA must distinguish each version of A
+A=B+C
+A=A+D
+P=A*E
+R=P-C

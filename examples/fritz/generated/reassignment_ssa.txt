@@ -1,0 +1,8 @@
+# SSA form of reassignment.txt
+# inputs:  B C D E
+# outputs: A -> A_2, P -> P_1, R -> R_1
+
+A_1 = B + C     # line 2
+A_2 = A_1 + D   # line 3
+P_1 = A_2 * E   # line 4
+R_1 = P_1 - C   # line 5

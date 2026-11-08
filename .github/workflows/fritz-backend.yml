@@ -1,0 +1,30 @@
+name: Fritz PA2 backend checks
+on:
+  push:
+    branches: [fritz-pa2]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  python-and-rtl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Icarus Verilog
+        run: sudo apt-get update -qq && sudo apt-get install -y iverilog
+      - name: Python regression tests
+        run: python -m unittest discover -s tests/fritz -v
+      - name: Generate ALAP RTL and testbench
+        run: python -m hls examples/fritz/professor_run_1.txt --schedule alap --emit-rtl --test-values A=3,B=2
+      - name: Simulate ALAP Verilog
+        run: python scripts/simulate_rtl.py out/professor_run_1_alap_rtl
+      - name: Generate constrained ALAP RTL and testbench
+        run: python -m hls examples/fritz/parallel_adders.txt --schedule cons-alap --adders 1 --subs 1 --muls 1 --emit-rtl --test-values A=2,B=3,C=4,D=5
+      - name: Simulate constrained ALAP Verilog
+        run: python scripts/simulate_rtl.py out/parallel_adders_cons-alap_rtl
+      - name: Generate custom RTL and testbench
+        run: python -m hls examples/fritz/reassignment.txt --schedule custom --emit-rtl --test-values B=2,C=3,D=4,E=2
+      - name: Simulate custom Verilog
+        run: python scripts/simulate_rtl.py out/reassignment_custom_rtl

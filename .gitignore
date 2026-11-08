@@ -1,2 +1,14 @@
 __pycache__/
 *.pyc
+
+# Generated intermediate/output files and Vivado implementation artifacts
+out/
+build/
+.Xil/
+*.jou
+*.pb
+*.dcp
+*.bit
+*.vcd
+*.vvp
+*.wdb
