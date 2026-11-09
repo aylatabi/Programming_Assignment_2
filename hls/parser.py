@@ -23,11 +23,12 @@ COMMENT_MARKER = "#"
 
 MAX_EQUATIONS = 20  # limit from the assignment spec
 
-# Hardware-dependent defaults used by pass 3's warnings. These are placeholders:
-# set them to the real datapath width and the number of input variables the
-# board wrapper can take from switches, once those are decided.
+# Hardware-dependent defaults used by pass 3's warnings.
+# The board loads every input from SW[7:0] one at a time (BTNL/BTNR pick the
+# input, BTNU loads it). LED[12:8] shows which input is picked, and 5 LEDs can
+# only count 0-31, so more than 32 inputs can't be told apart on the board.
 DEFAULT_BIT_WIDTH = 8
-DEFAULT_MAX_SWITCH_INPUTS = 4
+DEFAULT_MAX_BOARD_INPUTS = 32
 
 
 # ---------------------------------------------------------------------------
@@ -407,7 +408,7 @@ def check_program(
     lines: list[CleanLine],
     result: ParseResult,
     bit_width: int = DEFAULT_BIT_WIDTH,
-    max_switch_inputs: int = DEFAULT_MAX_SWITCH_INPUTS,
+    max_board_inputs: int = DEFAULT_MAX_BOARD_INPUTS,
 ) -> None:
     """Pass 3: checks that need the whole file. Adds to `result` in place."""
     if not lines:
@@ -440,12 +441,12 @@ def check_program(
                     eq.line,
                 ))
 
-    if len(result.inputs) > max_switch_inputs:
-        hardcoded = result.inputs[max_switch_inputs:]
+    if len(result.inputs) > max_board_inputs:
+        extra = result.inputs[max_board_inputs:]
         result.diagnostics.append(Diagnostic(
             "warning",
-            f"{len(result.inputs)} input variables, but the board takes {max_switch_inputs} "
-            f"from switches; these will be hardcoded: {', '.join(hardcoded)}",
+            f"{len(result.inputs)} input variables, but the board's input index LEDs "
+            f"only count to {max_board_inputs - 1}; these will be hard to select: {', '.join(extra)}",
         ))
 
 
@@ -456,12 +457,12 @@ def check_program(
 def parse_source(
     source: str,
     bit_width: int = DEFAULT_BIT_WIDTH,
-    max_switch_inputs: int = DEFAULT_MAX_SWITCH_INPUTS,
+    max_board_inputs: int = DEFAULT_MAX_BOARD_INPUTS,
 ) -> ParseResult:
     """Run all three passes on file text."""
     lines = clean_lines(source)
     result = parse_lines(lines)
-    check_program(lines, result, bit_width, max_switch_inputs)
+    check_program(lines, result, bit_width, max_board_inputs)
     return result
 
 

@@ -1,11 +1,19 @@
-# EXPECT: valid with warning: 10 input variables, more than the board's switch groups; some will be hardcoded
-# TESTS: input count vs. FPGA switches (threshold depends on bit-width and board)
-P = A + B
-Q = C + D
-R = E * F
-S = G - H
-T = I + J
-U = P + Q
-V = R * S
-W = T + U
-Z = V - W
+# EXPECT: valid with warning: 34 input variables, more than the 32 the board's input index LEDs can show
+# TESTS: input count vs. the FPGA board (inputs load one at a time; LED[12:8] counts 0-31)
+O1 = A1 + B1
+O2 = A2 + B2
+O3 = A3 + B3
+O4 = A4 + B4
+O5 = A5 + B5
+O6 = A6 + B6
+O7 = A7 + B7
+O8 = A8 + B8
+O9 = A9 + B9
+O10 = A10 + B10
+O11 = A11 + B11
+O12 = A12 + B12
+O13 = A13 + B13
+O14 = A14 + B14
+O15 = A15 + B15
+O16 = A16 + B16
+O17 = A17 + B17
