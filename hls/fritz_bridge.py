@@ -13,6 +13,7 @@ from .schedule import Schedule, validate, schedule_to_json
 from .fritz_impl.ir import Design, Node
 from .fritz_impl.binding import bind
 from .fritz_impl.verilog import datapath, system
+from .fritz_impl.board import fpga_top
 from .fritz_impl.sim import testbench, evaluate
 
 _OP = {'+': 'add', '-': 'sub', '*': 'mul'}
@@ -72,8 +73,10 @@ def emit(schedule: Schedule, target: Path, width: int = 8, test_values: str | No
         'schedule.json': json.dumps(schedule_to_json(schedule), indent=2) + '\n',
         'normalized_ir.json': json.dumps(design.to_json(), indent=2) + '\n',
     }
-    blocks = Path(__file__).resolve().parents[1] / 'rtl' / 'functional_units.v'
-    paths['functional_units.v'] = blocks.read_text(encoding='utf-8')
+    paths['fpga_top.v'] = fpga_top(design, scheduled)
+    rtl = Path(__file__).resolve().parents[1] / 'rtl'
+    paths['functional_units.v'] = (rtl / 'functional_units.v').read_text(encoding='utf-8')
+    paths['board_helpers.v'] = (rtl / 'board_helpers.v').read_text(encoding='utf-8')
     for filename, data in paths.items():
         (target / filename).write_text(data, encoding='utf-8')
     return {

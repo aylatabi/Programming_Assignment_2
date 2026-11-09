@@ -58,10 +58,12 @@ def main(argv=None):
     p.add_argument('--latency', type=int, help='ALAP deadline, cycles')
     p.add_argument('--width', type=int, default=8)
     p.add_argument('--test-values', default=None, help='e.g. A=3,B=2')
-    p.add_argument('--board-top', type=Path, required=True, help='FPGA board wrapper Verilog supplied by Ayla')
-    p.add_argument('--xdc', type=Path, required=True, help='real board constraints from Ayla / board vendor')
-    p.add_argument('--part', required=True, help='actual Xilinx part name; e.g. xc7a100tcsg324-1 (Nexys A7-100T)')
-    p.add_argument('--top', required=True, help='module name inside --board-top')
+    p.add_argument('--board-top', type=Path, default=None,
+                   help='board wrapper Verilog (default: the generated fpga_top.v for the Nexys4 DDR)')
+    p.add_argument('--xdc', type=Path, default=ROOT / 'rtl' / 'nexys4ddr.xdc',
+                   help='board constraints (default: rtl/nexys4ddr.xdc)')
+    p.add_argument('--part', default='xc7a100tcsg324-1', help='Xilinx part (default: Nexys4 DDR xc7a100tcsg324-1)')
+    p.add_argument('--top', default='fpga_top', help='top module name (default: fpga_top)')
     p.add_argument('--additional-verilog', type=Path, nargs='*', default=[], help='extra modules the board wrapper uses')
     p.add_argument('--out', type=Path, default=Path('out/fpga_build'))
     p.add_argument('--vivado', default='vivado', help='vivado or full path to vivado.bat')
@@ -69,7 +71,7 @@ def main(argv=None):
     p.add_argument('--hw-device', default=None, help='specific name/pattern of target device on JTAG chain')
     p.add_argument('--dry-run', action='store_true', help='generate RTL and Vivado TCL; do not synthesize/program')
     a = p.parse_args(argv)
-    for file in [a.equations, a.board_top, a.xdc, *a.additional_verilog]:
+    for file in [a.equations, a.xdc, *([a.board_top] if a.board_top else []), *a.additional_verilog]:
         if not file.is_file():
             p.error(f'missing input file: {file}')
     if not 1 <= a.width <= 64:
@@ -97,11 +99,13 @@ def main(argv=None):
         return result
     stem = a.equations.stem
     rtl_dir = hls_out / f'{stem}_{a.scheduler}_rtl'
-    rtl_sources = [rtl_dir / x for x in ('functional_units.v', 'generated_datapath.v', 'generated_system.v')]
+    rtl_sources = [rtl_dir / x for x in ('functional_units.v', 'generated_datapath.v', 'generated_system.v',
+                                         'board_helpers.v')]
+    board_top = a.board_top or rtl_dir / 'fpga_top.v'
     bitstream = folder / (a.top + '.bit')
     folder.mkdir(parents=True, exist_ok=True)
     tcl_file = folder / 'build_and_program.tcl'
-    text = generate_tcl(rtl_sources + [a.board_top, *a.additional_verilog],
+    text = generate_tcl(rtl_sources + [board_top, *a.additional_verilog],
                         a.xdc, a.part, a.top, bitstream, a.program, a.hw_device)
     tcl_file.write_text(text, encoding='utf-8')
     print('Build TCL:', tcl_file)
