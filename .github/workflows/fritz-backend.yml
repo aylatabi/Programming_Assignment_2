@@ -1,7 +1,7 @@
-name: Fritz PA2 backend checks
+name: PA2 checks
 on:
   push:
-    branches: [fritz-pa2]
+    branches: [main, fritz-pa2]
   pull_request:
   workflow_dispatch:
 jobs:
@@ -12,19 +12,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Icarus Verilog
-        run: sudo apt-get update -qq && sudo apt-get install -y iverilog
-      - name: Python regression tests
-        run: python -m unittest discover -s tests/fritz -v
-      - name: Generate ALAP RTL and testbench
-        run: python -m hls examples/fritz/professor_run_1.txt --schedule alap --emit-rtl --test-values A=3,B=2
-      - name: Simulate ALAP Verilog
-        run: python scripts/simulate_rtl.py out/professor_run_1_alap_rtl
-      - name: Generate constrained ALAP RTL and testbench
-        run: python -m hls examples/fritz/parallel_adders.txt --schedule cons-alap --adders 1 --subs 1 --muls 1 --emit-rtl --test-values A=2,B=3,C=4,D=5
-      - name: Simulate constrained ALAP Verilog
-        run: python scripts/simulate_rtl.py out/parallel_adders_cons-alap_rtl
-      - name: Generate custom RTL and testbench
-        run: python -m hls examples/fritz/reassignment.txt --schedule custom --emit-rtl --test-values B=2,C=3,D=4,E=2
-      - name: Simulate custom Verilog
-        run: python scripts/simulate_rtl.py out/reassignment_custom_rtl
+      - name: Install Icarus Verilog and pytest
+        run: sudo apt-get update -qq && sudo apt-get install -y iverilog && pip install pytest
+      - name: All tests (parser, schedulers, RTL, board top level)
+        run: python -m pytest -q
+      - name: Generate and simulate constrained ASAP
+        run: |
+          python -m hls examples/fritz/parallel_adders.txt --schedule cons-asap --adders 1 --emit-rtl --test-values A=2,B=3,C=4,D=5
+          python scripts/simulate_rtl.py out/parallel_adders_cons-asap_rtl
+      - name: Generate and simulate ALAP
+        run: |
+          python -m hls examples/fritz/professor_run_1.txt --schedule alap --emit-rtl --test-values A=3,B=2
+          python scripts/simulate_rtl.py out/professor_run_1_alap_rtl
+      - name: Generate and simulate constrained ALAP
+        run: |
+          python -m hls examples/fritz/wide.txt --schedule cons-alap --adders 1 --muls 1 --emit-rtl --test-values A=1,B=2,C=3,D=4,E=5,F=6,G=2,H=3
+          python scripts/simulate_rtl.py out/wide_cons-alap_rtl
+      - name: Generate and simulate custom
+        run: |
+          python -m hls examples/fritz/reassignment.txt --schedule custom --emit-rtl --test-values B=2,C=3,D=4,E=2
+          python scripts/simulate_rtl.py out/reassignment_custom_rtl
+      - name: Vivado build script dry run
+        run: python scripts/build_and_program.py --equations examples/fritz/professor_run_1.txt --scheduler cons-asap --dry-run

@@ -1,4 +1,6 @@
-# Fritz backend overlay — review before merging
+# Fritz backend overlay — merge notes (historical)
+
+> Historical: these notes were written before `fritz-pa2` was merged into `main`. The merge is done; see the [README](../README.md) for the current state.
 
 The update ZIP is a **file overlay**, not a replacement or new Git repository. It is created against the user-uploaded `Programming_Assignment_2-fritz-pa2.zip` snapshot.
 

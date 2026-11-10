@@ -12,9 +12,9 @@ This document refers to the source in this repository (the extracted `fritz-pa2`
 | Part 4: resource binding | `hls/fritz_impl/binding.py` + `hls/fritz_bridge.py` | `binding.json` in generated example |
 | Part 4: mux/register generator | `hls/fritz_impl/verilog.py` | `generated_datapath.v` in examples |
 | Part 6: generated system RTL | `hls/fritz_impl/verilog.py`, `rtl/functional_units.v` | `generated_system.v`, `testbench.v` |
-| Part 7: build/program script | `scripts/build_and_program.py` | `--dry-run` TCL generation; Vivado/FPGA NOT locally verified |
+| Part 7: build/program script | `scripts/build_and_program.py` | Vivado 2024.1 build, run on the Nexys4 DDR |
 
-Ayla-owned, **not implemented here**: `cons-asap`, final board wrapper and XDC constraints, integration of teammate-specific FSM and Part 5 arithmetic blocks.
+Ayla: parser, SSA, DAG, ASAP and constrained ASAP (`hls/schedulers/cons_asap.py`), the Nexys4 DDR top level (`hls/fritz_impl/board.py`, `rtl/board_helpers.v`) and constraints (`rtl/nexys4ddr.xdc`). The FSM and functional units in this back end are the ones used in the final design. See the [README](../README.md) for the current overview.
 
 ## Pipeline, actual call flow
 

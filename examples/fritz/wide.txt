@@ -1,0 +1,11 @@
+# Wide example: lots of parallel work, so the schedulers differ.
+# ASAP: 3 cycles, 3 adders. ALAP: 3 cycles, 2 adders.
+# cons-asap / cons-alap with --adders 1 --muls 1, and custom: 4 cycles, 1 of each unit.
+P = A + B
+Q = C + D
+R = E * F
+S = G * H
+T = P + Q
+U = R - S
+V = T * U
+W = A + C

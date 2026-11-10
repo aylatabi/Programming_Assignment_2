@@ -1,14 +1,14 @@
-# Fritz backend validation record
+# Verification record (final)
 
-Python compileall: passed
-Python unittest: 22 tests passed (including 33 existing parser fixtures)
-Small DAG feasibility tested against brute-force enumeration
-Additional randomized DAG scheduling tests: 50 cases x 4 implemented modes
-Run 1 ALAP: A=3 B=2 -> X=5 Y=8 Z=3 Q=6, 3 cycles, 1 add/1 sub/1 mul
-Run 2 ASAP: A=2 B=3 C=4 D=5 -> X=5 Y=9 Z=14 Q=12, 3 cycles, 2 add/1 sub
-Run 2 constrained ALAP: same results, 4 cycles, 1 add/1 sub
-Run 3 custom (reassignment): B=2 C=3 D=4 E=2 -> A=9 P=18 R=15, 4 cycles, 1 add/1 sub/1 mul
-Vivado TCL dry-run with artificial wrapper/XDC: generated successfully. This is NOT physical FPGA verification.
-Icarus Verilog: NOT AVAILABLE in this environment; generated Verilog simulation NOT executed.
-Vivado: NOT AVAILABLE; synthesis, place/route, bitstream and physical programming NOT executed.
-GitHub Actions workflow: provided but not executed until pushed to GitHub.
+python -m pytest -q: 29 tests passed, 33 parser fixture subtests
+  - parser: 21 invalid, 9 valid, 3 warning files
+  - schedulers: randomized and exhaustive small-DAG checks; every schedule passes validate()
+  - RTL: generated testbench.v passes in Icarus Verilog
+  - board: fpga_top simulated through switches, buttons and the 7-segment display
+Manual: testbench.v PASS for 15 combinations of 6 equation files and all 5 schedulers
+Run 1 ALAP / cons-asap: A=3 B=2 -> X=5 Y=8 Z=3 Q=6, 3 cycles, 1 add/1 sub/1 mul
+Run 2 cons-asap, 1 adder: A=2 B=3 C=4 D=5 -> X=5 Y=9 Z=14 Q=12, 4 cycles, 1 add/1 sub
+Run 3 custom (reassignment): B=2 C=3 D=4 E=2 -> A=9 P=18 R=15
+Vivado 2024.1: bitstream built for xc7a100tcsg324-1 with rtl/nexys4ddr.xdc
+Nexys4 DDR: parallel_adders (cons-asap, 1 adder) run on the board; input loading,
+  stepping, unit selection and display verified. LED9 does not light on our board (hardware).

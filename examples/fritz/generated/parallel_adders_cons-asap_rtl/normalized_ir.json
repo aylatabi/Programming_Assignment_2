@@ -1,0 +1,49 @@
+{
+  "width": 8,
+  "inputs": [
+    "in_A",
+    "in_B",
+    "in_C",
+    "in_D"
+  ],
+  "nodes": [
+    {
+      "id": "X_1",
+      "op": "add",
+      "args": [
+        "in_A",
+        "in_B"
+      ]
+    },
+    {
+      "id": "Y_1",
+      "op": "add",
+      "args": [
+        "in_C",
+        "in_D"
+      ]
+    },
+    {
+      "id": "Z_1",
+      "op": "add",
+      "args": [
+        "X_1",
+        "Y_1"
+      ]
+    },
+    {
+      "id": "Q_1",
+      "op": "sub",
+      "args": [
+        "Z_1",
+        "in_A"
+      ]
+    }
+  ],
+  "outputs": {
+    "out_X": "X_1",
+    "out_Y": "Y_1",
+    "out_Z": "Z_1",
+    "out_Q": "Q_1"
+  }
+}
