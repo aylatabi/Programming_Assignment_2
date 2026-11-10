@@ -13,7 +13,7 @@ module tb_fpga_top;
   wire DP;
   wire [7:0] AN;
 
-  fpga_top #(.DEBOUNCE_BITS(3), .REFRESH_BITS(2)) dut (
+  fpga_top #(.DEBOUNCE_BITS(3), .REFRESH_BITS(2), .HOLD_BITS(4)) dut (
     .CLK100MHZ(clk), .CPU_RESETN(CPU_RESETN),
     .BTNC(BTNC), .BTNU(BTNU), .BTNL(BTNL), .BTNR(BTNR), .BTND(BTND),
     .SW(SW), .LED(LED), .SEG(SEG), .DP(DP), .AN(AN));
@@ -147,6 +147,20 @@ module tb_fpga_top;
     press(D); press(C); press(C); press(C);
     SW[15:10] = 6; read_display(sel, cyc, val, blanks); check("restart: out Q", val, 40);
     SW[15:10] = 4; read_display(sel, cyc, val, blanks); check("restart: out Y", val, 24);
+
+    // Input view: BTNL goes back to box 0 (A = 10) and the display shows
+    // the box number and its value, with the cycle digits blank.
+    BTNL = 1;
+    for (i = 0; i < 100 && !dut.input_view; i = i + 1) @(posedge clk);
+    #1;
+    check("input view starts on BTNL", dut.input_view, 1);
+    check("input view box number", dut.disp_sel, 0);
+    check("input view value of A", dut.v, 10);
+    check("input view blanks cycle digits", dut.disp.blank[5:4], 3);
+    BTNL = 0;
+    repeat (60) @(posedge clk);
+    check("normal view returns", dut.input_view, 0);
+    check("normal view shows Y again", dut.v, 24);
 
     // Reset clears everything.
     CPU_RESETN = 0; repeat (5) @(posedge clk); CPU_RESETN = 1; repeat (5) @(posedge clk);

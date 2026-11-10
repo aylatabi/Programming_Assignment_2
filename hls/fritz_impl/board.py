@@ -13,10 +13,14 @@ Board controls
   CPU_RESETN  reset everything
   SW[15:10]   what the display shows (index into SHOW_LIST, printed in the file)
 
-Display (decimal)
+Display (decimal), normal view
   digits 7-6  the SW[15:10] selection number
   digits 5-4  cycle number (0 = not started)
   digits 3-0  value of the selected unit / output / input
+Display, input view (about 3 s after pressing BTNL, BTNR or BTNU)
+  digits 7-6  input box number (same order as BTNL/BTNR)
+  digits 5-4  blank
+  digits 3-0  value stored in that input
 LEDs
   LED[7:0]    stored value of the input picked with BTNL/BTNR
   LED[12:8]   index of that input
@@ -51,12 +55,14 @@ def fpga_top(d: Design, schedule: dict) -> str:
     n_in = len(ins)
     iw = max(1, (max(1, n_in) - 1).bit_length())
     sw_value = f"SW[{w - 1}:0]" if w <= 8 else f"{{{w - 8}'d0, SW[7:0]}}"
+    in_sel_wide = "in_sel" if iw >= SELECT_BITS else f"{{{SELECT_BITS - iw}'d0, in_sel}}"
 
     s: list[str] = [
         "// Generated Nexys4 DDR top level. Constraints: rtl/nexys4ddr.xdc.",
         "// Controls: SW[7:0] value, BTNL/BTNR pick input, BTNU load, BTND start,",
         "// BTNC step one cycle, CPU_RESETN reset, SW[15:10] choose what to display.",
         "// Display: [7:6] selection  [5:4] cycle  [3:0] value (decimal).",
+        "// For ~3 s after BTNL/BTNR/BTNU: [7:6] input box  [5:4] blank  [3:0] its stored value.",
         "// SW[15:10] selection list:",
     ]
     for i, name in enumerate(shown):
@@ -67,7 +73,8 @@ def fpga_top(d: Design, schedule: dict) -> str:
     s += [
         "module fpga_top #(",
         "    parameter DEBOUNCE_BITS = 20,",
-        "    parameter REFRESH_BITS = 17",
+        "    parameter REFRESH_BITS = 17,",
+        "    parameter HOLD_BITS = 28        // input view lasts 2**28 clocks, about 2.7 s",
         ") (",
         "    input  wire        CLK100MHZ,",
         "    input  wire        CPU_RESETN,",
@@ -164,22 +171,36 @@ def fpga_top(d: Design, schedule: dict) -> str:
         "  wire [7:0] cycle_no = busy ? {{(8-" + str(sw) + "){1'b0}}, step} + 8'd1 :",
         f"                        done ? 8'd{cycles} : 8'd0;",
         "",
-        "  wire [31:0] v = shown;",
+        "  // Input view: after BTNL/BTNR/BTNU, show the input box and its value for a while.",
+        "  reg [HOLD_BITS-1:0] hold;",
+        "  always @(posedge clk) begin",
+        "    if (rst) hold <= {HOLD_BITS{1'b0}};",
+        "    else if (prev_p | next_p | load_p) hold <= {HOLD_BITS{1'b1}};",
+        "    else if (hold != {HOLD_BITS{1'b0}}) hold <= hold - 1'b1;",
+        "  end",
+        "  wire input_view = |hold;",
+        f"  wire [{SELECT_BITS - 1}:0] in_sel_wide = {in_sel_wide};",
+        f"  wire [{SELECT_BITS - 1}:0] disp_sel = input_view ? in_sel_wide : show_sel;",
+        "  wire disp_valid = input_view | shown_valid;",
+        "",
+        "  wire [31:0] v = input_view ? in_sel_value : shown;",
         "  wire [3:0] v0 = v % 10;",
         "  wire [3:0] v1 = (v / 10) % 10;",
         "  wire [3:0] v2 = (v / 100) % 10;",
         "  wire [3:0] v3 = (v / 1000) % 10;",
         "  wire [3:0] c0 = cycle_no % 10;",
         "  wire [3:0] c1 = (cycle_no / 10) % 10;",
-        "  wire [3:0] s0 = show_sel % 10;",
-        "  wire [3:0] s1 = show_sel / 10;",
+        "  wire [3:0] s0 = disp_sel % 10;",
+        "  wire [3:0] s1 = disp_sel / 10;",
         "",
         "  pa2_sevenseg #(.REFRESH_BITS(REFRESH_BITS)) disp (",
         "    .clk(clk), .rst(rst),",
         "    .digits({s1, s0, c1, c0, v3, v2, v1, v0}),",
-        "    // Hide value digits when nothing is selected, and leading zeros of the value.",
-        "    .blank({4'b0000, ~shown_valid | (v < 1000), ~shown_valid | (v < 100),",
-        "            ~shown_valid | (v < 10), ~shown_valid}),",
+        "    // Hide the cycle in input view, value digits when nothing is selected,",
+        "    // and leading zeros of the value.",
+        "    .blank({2'b00, input_view, input_view,",
+        "            ~disp_valid | (v < 1000), ~disp_valid | (v < 100),",
+        "            ~disp_valid | (v < 10), ~disp_valid}),",
         "    .seg(SEG), .an(AN));",
         "  assign DP = 1'b1;",
         "",
