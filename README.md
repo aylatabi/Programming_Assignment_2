@@ -6,7 +6,7 @@ with one of five algorithms, and generates Verilog (datapath, control FSM,
 functional units, testbench and a board top level) that runs on a
 **Digilent Nexys4 DDR** board, stepped one clock cycle per button press.
 
-Team: Ayla Tabi and Fritz.
+Team: Ayla Tabi and Fritz Illner.
 
 ## Status
 
@@ -276,3 +276,30 @@ few minutes, during which the schedule, schematic and simulation are shown.
   shows the input number instead.
 
 More detail on the back end: [docs/FRITZ_BACKEND.md](docs/FRITZ_BACKEND.md).
+
+## AI use
+
+We used Claude Code (Anthropic's AI coding assistant) during development.
+It wrote or helped write:
+
+- the front end: parser and its test files (`hls/parser.py`, `tests/parser/`),
+  SSA (`hls/ssa.py`), DAG (`hls/dag.py`), schedule format (`hls/schedule.py`),
+  ASAP scheduler and the command line (`hls/cli.py`)
+- the constrained ASAP scheduler (`hls/schedulers/cons_asap.py`) and its tests
+- the Nexys4 DDR top level generator (`hls/fritz_impl/board.py`), the button
+  debouncer and 7-segment driver (`rtl/board_helpers.v`) and the board
+  constraints (`rtl/nexys4ddr.xdc`, adapted from Digilent's master file)
+- the board-level testbench (`tests/board/`)
+- fixes to the parser's board-input warning and the build script defaults
+- this README, the CI workflow and updates to the notes in `docs/`
+
+Fritz Illner also used AI assistance for his back end: the ALAP, constrained
+ALAP and custom schedulers (`hls/schedulers/`), resource binding, datapath
+and FSM generation, the testbench generator (`hls/fritz_impl/`,
+`hls/fritz_bridge.py`), the build and simulation scripts (`scripts/`) and his
+notes in `docs/`.
+
+Claude Code was also used to explain the existing code and to plan and run the tests.
+Commits it helped write are marked `Co-Authored-By: Claude` in the git
+history. We reviewed the generated code, tested it in simulation and on the
+board, and can explain every part of the design.
